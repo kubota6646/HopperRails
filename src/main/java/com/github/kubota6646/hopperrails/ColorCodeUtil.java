@@ -1,6 +1,10 @@
 package com.github.kubota6646.hopperrails;
 
+import java.util.regex.Pattern;
+
 public class ColorCodeUtil {
+    
+    private static final Pattern COLOR_CODE_PATTERN = Pattern.compile("&[0-9a-fk-or]");
     
     /**
      * Minecraftのカラーコードを削除する
@@ -11,27 +15,6 @@ public class ColorCodeUtil {
         if (message == null) {
             return "";
         }
-        return message.replace("&a", "")
-                     .replace("&e", "")
-                     .replace("&c", "")
-                     .replace("&7", "")
-                     .replace("&0", "")
-                     .replace("&1", "")
-                     .replace("&2", "")
-                     .replace("&3", "")
-                     .replace("&4", "")
-                     .replace("&5", "")
-                     .replace("&6", "")
-                     .replace("&8", "")
-                     .replace("&9", "")
-                     .replace("&b", "")
-                     .replace("&d", "")
-                     .replace("&f", "")
-                     .replace("&k", "")
-                     .replace("&l", "")
-                     .replace("&m", "")
-                     .replace("&n", "")
-                     .replace("&o", "")
-                     .replace("&r", "");
+        return COLOR_CODE_PATTERN.matcher(message).replaceAll("");
     }
 }

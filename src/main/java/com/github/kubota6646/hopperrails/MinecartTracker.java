@@ -17,20 +17,26 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MinecartTracker implements Listener {
     
     private final HopperRails plugin;
     private final Map<UUID, MinecartData> trackedMinecarts;
+    private final Map<String, Long> activeRedstoneBlocks;
     private BukkitTask trackingTask;
     
     public MinecartTracker(HopperRails plugin) {
         this.plugin = plugin;
         this.trackedMinecarts = new HashMap<>();
+        this.activeRedstoneBlocks = new ConcurrentHashMap<>();
     }
     
     public void startTracking() {
         int interval = plugin.getCheckInterval();
+        // 注意: すべてのワールドのエンティティをスキャンするため、
+        // エンティティ数が多いサーバーではパフォーマンスに影響する可能性があります。
+        // config.ymlの「チェック間隔」を調整してパフォーマンスを最適化してください。
         trackingTask = Bukkit.getScheduler().runTaskTimer(plugin, this::checkAllMinecarts, 0L, interval);
     }
     
@@ -130,6 +136,8 @@ public class MinecartTracker implements Listener {
         
         // レールの下のブロックにレッドストーン信号を送る
         Material originalMaterial = blockBelow.getType();
+        String blockKey = blockBelow.getWorld().getName() + ":" + 
+                         blockBelow.getX() + "," + blockBelow.getY() + "," + blockBelow.getZ();
         
         // 安全性チェック: 空気、流体、または既にレッドストーンブロックの場合はスキップ
         if (originalMaterial == Material.AIR || 
@@ -144,6 +152,18 @@ public class MinecartTracker implements Listener {
             return;
         }
         
+        // 既に処理中のブロックかチェック（競合状態の防止）
+        Long existingTimestamp = activeRedstoneBlocks.get(blockKey);
+        if (existingTimestamp != null && System.currentTimeMillis() - existingTimestamp < 2000) {
+            if (plugin.isDebugMode()) {
+                plugin.getLogger().info("レッドストーン信号送信スキップ（既に処理中）: " + blockKey);
+            }
+            return;
+        }
+        
+        // 処理中として記録
+        activeRedstoneBlocks.put(blockKey, System.currentTimeMillis());
+        
         // レッドストーンブロックに変更
         blockBelow.setType(Material.REDSTONE_BLOCK);
         
@@ -153,6 +173,8 @@ public class MinecartTracker implements Listener {
             if (blockBelow.getType() == Material.REDSTONE_BLOCK) {
                 blockBelow.setType(originalMaterial);
             }
+            // 処理完了として記録から削除
+            activeRedstoneBlocks.remove(blockKey);
         }, duration);
         
         if (plugin.isDebugMode()) {
