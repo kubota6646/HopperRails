@@ -96,8 +96,15 @@ public class MinecartTracker implements Listener {
                 // 移動モードだがまだチェストエリアを離れていない場合は移動モードを維持
                 newMode = MinecartMode.MOVING;
             } else if (previousMode == MinecartMode.MOVING && data.hasLeftChestArea()) {
-                // 移動モードでチェストエリアから離れて戻ってきた = 待機モードへ
-                newMode = MinecartMode.WAITING;
+                // 移動モードでチェストエリアから離れて戻ってきた場合
+                if (currentItemCount > 0) {
+                    // アイテムが残っている場合は吸収モードをスキップして移動モードへ
+                    newMode = MinecartMode.MOVING;
+                    sendRedstoneSignal(location);
+                } else {
+                    // アイテムがない場合は待機モードへ
+                    newMode = MinecartMode.WAITING;
+                }
                 data.setLeftChestArea(false);
             } else if (previousMode == MinecartMode.WAITING) {
                 // 待機モードを維持（アイテムが増えるまで）
