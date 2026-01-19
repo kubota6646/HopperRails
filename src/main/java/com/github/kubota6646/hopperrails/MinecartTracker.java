@@ -93,18 +93,31 @@ public class MinecartTracker implements Listener {
                 newMode = MinecartMode.MOVING;
                 // レッドストーン信号を送信
                 sendRedstoneSignal(location);
-            } else if (previousMode == MinecartMode.MOVING) {
-                // 移動モードから戻ってきた場合、待機モードに
+            } else if (previousMode == MinecartMode.MOVING && !data.hasLeftChestArea()) {
+                // 移動モードだがまだチェストエリアを離れていない場合は移動モードを維持
+                newMode = MinecartMode.MOVING;
+            } else if (previousMode == MinecartMode.MOVING && data.hasLeftChestArea()) {
+                // 移動モードでチェストエリアから離れて戻ってきた = 待機モードへ
                 newMode = MinecartMode.WAITING;
-            } else if (previousMode != MinecartMode.ABSORBING) {
-                // その他の場合は待機モード
+                data.setLeftChestArea(false);
+            } else if (previousMode == MinecartMode.WAITING) {
+                // 待機モードを維持（アイテムが増えるまで）
+                newMode = MinecartMode.WAITING;
+            } else {
+                // 初期状態やその他の場合は待機モード
                 newMode = MinecartMode.WAITING;
             }
         } else {
             // チェストの下にいない場合
             if (previousMode == MinecartMode.MOVING) {
-                // 移動モードを維持
+                // 移動モードを維持し、チェストエリアを離れたことを記録
                 newMode = MinecartMode.MOVING;
+                data.setLeftChestArea(true);
+            } else if (previousMode == MinecartMode.ABSORBING) {
+                // 吸収中にチェストの下から離れた場合も移動モードへ
+                newMode = MinecartMode.MOVING;
+                data.setLeftChestArea(true);
+                sendRedstoneSignal(location);
             }
         }
         
@@ -166,6 +179,7 @@ public class MinecartTracker implements Listener {
     private static class MinecartData {
         private MinecartMode mode = MinecartMode.WAITING;
         private int previousItemCount = 0;
+        private boolean leftChestArea = false;
         
         public MinecartMode getMode() {
             return mode;
@@ -181,6 +195,14 @@ public class MinecartTracker implements Listener {
         
         public void setPreviousItemCount(int count) {
             this.previousItemCount = count;
+        }
+        
+        public boolean hasLeftChestArea() {
+            return leftChestArea;
+        }
+        
+        public void setLeftChestArea(boolean left) {
+            this.leftChestArea = left;
         }
     }
 }
