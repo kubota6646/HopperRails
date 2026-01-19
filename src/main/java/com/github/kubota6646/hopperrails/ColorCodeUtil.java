@@ -4,7 +4,7 @@ import java.util.regex.Pattern;
 
 public class ColorCodeUtil {
     
-    private static final Pattern COLOR_CODE_PATTERN = Pattern.compile("&[0-9a-fk-or]");
+    private static final Pattern COLOR_CODE_PATTERN = Pattern.compile("&[0-9a-fk-or]", Pattern.CASE_INSENSITIVE);
     
     /**
      * Minecraftのカラーコードを削除する

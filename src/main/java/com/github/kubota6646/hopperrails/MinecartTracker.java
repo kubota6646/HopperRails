@@ -14,7 +14,6 @@ import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,7 +27,7 @@ public class MinecartTracker implements Listener {
     
     public MinecartTracker(HopperRails plugin) {
         this.plugin = plugin;
-        this.trackedMinecarts = new HashMap<>();
+        this.trackedMinecarts = new ConcurrentHashMap<>();
         this.activeRedstoneBlocks = new ConcurrentHashMap<>();
     }
     
@@ -49,12 +48,10 @@ public class MinecartTracker implements Listener {
     
     private void checkAllMinecarts() {
         // すべてのワールドをチェック
+        // パフォーマンス最適化: getEntitiesByClassを使用してホッパー付きトロッコのみを取得
         for (org.bukkit.World world : Bukkit.getWorlds()) {
-            for (Entity entity : world.getEntities()) {
-                if (entity instanceof HopperMinecart) {
-                    HopperMinecart minecart = (HopperMinecart) entity;
-                    checkMinecart(minecart);
-                }
+            for (HopperMinecart minecart : world.getEntitiesByClass(HopperMinecart.class)) {
+                checkMinecart(minecart);
             }
         }
     }
