@@ -42,16 +42,9 @@ public class MinecartTracker implements Listener {
     }
     
     private void checkAllMinecarts() {
-        for (Entity entity : Bukkit.getWorlds().get(0).getEntities()) {
-            if (entity instanceof HopperMinecart) {
-                HopperMinecart minecart = (HopperMinecart) entity;
-                checkMinecart(minecart);
-            }
-        }
-        
         // すべてのワールドをチェック
-        for (int i = 1; i < Bukkit.getWorlds().size(); i++) {
-            for (Entity entity : Bukkit.getWorlds().get(i).getEntities()) {
+        for (org.bukkit.World world : Bukkit.getWorlds()) {
+            for (Entity entity : world.getEntities()) {
                 if (entity instanceof HopperMinecart) {
                     HopperMinecart minecart = (HopperMinecart) entity;
                     checkMinecart(minecart);
@@ -136,23 +129,34 @@ public class MinecartTracker implements Listener {
         Block blockBelow = railBlock.getRelative(BlockFace.DOWN);
         
         // レールの下のブロックにレッドストーン信号を送る
-        // これは、レールの下のブロックを一時的にレッドストーンブロックに変更することで実現
         Material originalMaterial = blockBelow.getType();
         
-        if (originalMaterial != Material.REDSTONE_BLOCK) {
-            blockBelow.setType(Material.REDSTONE_BLOCK);
-            
-            // 指定された時間後に元に戻す
-            int duration = plugin.getRedstoneSignalDuration();
-            Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                if (blockBelow.getType() == Material.REDSTONE_BLOCK) {
-                    blockBelow.setType(originalMaterial);
-                }
-            }, duration);
-            
+        // 安全性チェック: 空気、流体、または既にレッドストーンブロックの場合はスキップ
+        if (originalMaterial == Material.AIR || 
+            originalMaterial == Material.CAVE_AIR || 
+            originalMaterial == Material.VOID_AIR ||
+            originalMaterial == Material.WATER ||
+            originalMaterial == Material.LAVA ||
+            originalMaterial == Material.REDSTONE_BLOCK) {
             if (plugin.isDebugMode()) {
-                plugin.getLogger().info("レッドストーン信号を送信: " + location);
+                plugin.getLogger().info("レッドストーン信号送信スキップ（置換不可能なブロック）: " + originalMaterial);
             }
+            return;
+        }
+        
+        // レッドストーンブロックに変更
+        blockBelow.setType(Material.REDSTONE_BLOCK);
+        
+        // 指定された時間後に元に戻す
+        int duration = plugin.getRedstoneSignalDuration();
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (blockBelow.getType() == Material.REDSTONE_BLOCK) {
+                blockBelow.setType(originalMaterial);
+            }
+        }, duration);
+        
+        if (plugin.isDebugMode()) {
+            plugin.getLogger().info("レッドストーン信号を送信: " + location);
         }
     }
     
@@ -165,7 +169,7 @@ public class MinecartTracker implements Listener {
             };
             
             String message = plugin.getConfig().getString(messageKey, "");
-            plugin.getLogger().info(message.replace("&a", "").replace("&e", "").replace("&c", "").replace("&7", ""));
+            plugin.getLogger().info(ColorCodeUtil.stripColorCodes(message));
         }
     }
     

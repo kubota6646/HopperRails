@@ -23,7 +23,7 @@ public class HopperRails extends JavaPlugin {
         
         // 有効化メッセージ
         String message = getConfig().getString("メッセージ.プラグイン有効化", "&a[HopperRails] プラグインが有効化されました");
-        getLogger().info(message.replace("&a", "").replace("&e", "").replace("&c", "").replace("&7", ""));
+        getLogger().info(ColorCodeUtil.stripColorCodes(message));
     }
     
     @Override
@@ -35,7 +35,7 @@ public class HopperRails extends JavaPlugin {
         
         // 無効化メッセージ
         String message = getConfig().getString("メッセージ.プラグイン無効化", "&c[HopperRails] プラグインが無効化されました");
-        getLogger().info(message.replace("&a", "").replace("&e", "").replace("&c", "").replace("&7", ""));
+        getLogger().info(ColorCodeUtil.stripColorCodes(message));
     }
     
     public boolean isDebugMode() {
