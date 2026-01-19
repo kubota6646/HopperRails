@@ -1,0 +1,6 @@
+name: HopperRails
+version: '${version}'
+main: com.github.kubota6646.hopperrails.HopperRails
+api-version: '1.19'
+description: ホッパー付きトロッコの自動レッドストーン信号制御プラグイン
+author: kubota6646
