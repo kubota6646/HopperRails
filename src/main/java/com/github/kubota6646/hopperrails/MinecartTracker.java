@@ -20,6 +20,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MinecartTracker implements Listener {
     
+    // レッドストーン信号の重複防止タイムアウト（ミリ秒）
+    private static final long REDSTONE_SIGNAL_TIMEOUT_MS = 2000;
+    
     private final HopperRails plugin;
     private final Map<UUID, MinecartData> trackedMinecarts;
     private final Map<String, Long> activeRedstoneBlocks;
@@ -151,7 +154,7 @@ public class MinecartTracker implements Listener {
         
         // 既に処理中のブロックかチェック（競合状態の防止）
         Long existingTimestamp = activeRedstoneBlocks.get(blockKey);
-        if (existingTimestamp != null && System.currentTimeMillis() - existingTimestamp < 2000) {
+        if (existingTimestamp != null && System.currentTimeMillis() - existingTimestamp < REDSTONE_SIGNAL_TIMEOUT_MS) {
             if (plugin.isDebugMode()) {
                 plugin.getLogger().info("レッドストーン信号送信スキップ（既に処理中）: " + blockKey);
             }
