@@ -4,7 +4,7 @@
 0.0.1
 
 ## 対応バージョン
-Minecraft 1.19.4 (Spigot/Paper)
+Minecraft 1.21.8 (Spigot/Paper)
 
 ## プラグインの仕組み
 
@@ -110,8 +110,8 @@ Minecraft 1.19.4 (Spigot/Paper)
 
 - Java 17 以上
 - Gradle 8.5
-- Spigot API 1.19.4-R0.1-SNAPSHOT
+- Spigot API 1.21.8-R0.1-SNAPSHOT
 
 ## 使用ライブラリ
 
-- Spigot API 1.19.4-R0.1-SNAPSHOT (compileOnly)
+- Spigot API 1.21.8-R0.1-SNAPSHOT (compileOnly)

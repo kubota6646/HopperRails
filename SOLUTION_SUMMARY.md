@@ -1,12 +1,12 @@
 # HopperRails プラグイン - 実装完了報告
 
 ## プロジェクト概要
-Minecraft 1.19.4対応のホッパー付きトロッコ自動制御プラグイン
+Minecraft 1.21.8対応のホッパー付きトロッコ自動制御プラグイン
 
 ## 要件の達成状況
 
 ### ✅ 必須要件
-1. **Minecraft 1.19.4対応**: Spigot API 1.19.4-R0.1-SNAPSHOT使用
+1. **Minecraft 1.21.8対応**: Spigot API 1.21.8-R0.1-SNAPSHOT使用
 2. **Gradleビルド**: Gradle 8.5 + Wrapperで構築可能
 3. **プラグイン機能**: 3つのモード実装完了
    - 待機モード: チェスト下で待機
@@ -79,7 +79,7 @@ Minecraft 1.19.4対応のホッパー付きトロッコ自動制御プラグイ�
 3. `plugins/HopperRails/config.yml`で設定を調整（任意）
 
 ## 動作環境
-- Minecraft Server: 1.19.4 (Spigot/Paper)
+- Minecraft Server: 1.21.8 (Spigot/Paper)
 - Java: 17以上
 - エンコーディング: UTF-8
 
