@@ -1,6 +1,6 @@
 # HopperRails
 
-Minecraft 1.19.4 対応のホッパー付きトロッコ制御プラグイン
+Minecraft 1.21.8 対応のホッパー付きトロッコ制御プラグイン
 
 ## 概要
 
@@ -58,7 +58,7 @@ Minecraft 1.19.4 対応のホッパー付きトロッコ制御プラグイン
 
 ## 必要環境
 
-- Minecraft 1.19.4
+- Minecraft 1.21.8
 - Spigot / Paper サーバー
 - Java 17 以上
 
